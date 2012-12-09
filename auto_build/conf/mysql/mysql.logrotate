@@ -1,0 +1,17 @@
+/var/log/mysql/*.log {
+    daily
+    size 50M
+    rotate 30
+    maxage 90
+    notifempty
+    compress
+    dateext
+    dateformat -%Y%m%d-%s
+    missingok
+    nomail
+    noolddir
+    sharedscripts
+    postrotate
+        /usr/local/mysql/bin/mysqladmin ping && /usr/local/mysql/bin/mysqladmin flush-logs
+    endscript
+}

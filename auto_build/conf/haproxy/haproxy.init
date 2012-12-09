@@ -1,0 +1,192 @@
+#!/bin/bash
+######################################################
+## Compatible with RedHat/CentOS Debian/Ubuntu SUSE ##
+######################################################
+
+# Support chkconfig on RedHat/CentOS Linux
+# chkconfig:   2345 85 15
+# description: HA-Proxy is a TCP/HTTP reverse proxy
+# processname: haproxy
+# config:      /usr/local/haproxy/etc/haproxy.cfg
+# pidfile:     /var/run/haproxy.pid
+
+# Support LSB init script conventions
+### BEGIN INIT INFO
+# Provides:          haproxy
+# Required-Start:    $local_fs $syslog $network
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 S 1 6
+# Short-Description: Start/stop haproxy daemon
+# Description:       HA-Proxy is a TCP/HTTP reverse proxy
+### END INIT INFO
+
+#debug
+#set -x
+#check unbound variables
+#set -u
+# script PATH enviroment
+export PATH='/usr/bin:/bin:/usr/sbin:/sbin'
+# disable core dump
+ulimit -c 0
+# script return value
+RETVAL=0
+# haproxy general config
+PROG='haproxy'
+SYMLINK=$(readlink -f /usr/local/haproxy)
+BASEDIR=${SYMLINK:-/usr/local/haproxy}
+DAEMON="${BASEDIR}/sbin/$PROG"
+CONF="${BASEDIR}/etc/$PROG.cfg"
+PIDFILE="/var/run/$PROG.pid"
+LOCKFILE="/var/lock/$PROG"
+# haproxy start timeout milliscond
+STARTTIME=10000
+# haproxy stop timeout milliscond
+STOPTIME=10000
+
+#Common Function
+color_msg(){
+    local COLOR=$1
+    local MSG=$2
+    OFFSET="\033[60G"
+    NORMAL="\033[0m"
+    case $COLOR in
+        red)
+            COLOR="\033[1;40;31m"
+            ;;
+        green)
+            COLOR="\033[1;40;32m"
+            ;;
+        yellow)
+            COLOR="\033[1;40;33m"
+            ;;
+        *)
+            COLOR="\033[0m"
+            ;;
+    esac
+    echo -en "$OFFSET [$COLOR $MSG $NORMAL"
+    echo     "]"
+}
+
+configtest() {
+    echo -n "Configtest $PROG : "
+    $DAEMON -c -q -f $CONF
+    if [ $? -eq 0 ] ;then
+        color_msg green SUCCESS
+    else
+        color_msg red FAILED && exit 1
+    fi
+}
+
+start() {
+    echo -n "Starting $PROG : "
+    PROC_PID=$(pgrep -P 1 -u root ^$PROG)
+    if [ -n "$PROC_PID" ]; then
+        echo -n "is already running."
+        color_msg yellow WARNING
+    else
+        $DAEMON -D -f $CONF -p $PIDFILE >/dev/null 2>&1
+        if [  $? -eq 0 ]; then
+            color_msg green SUCCESS && touch $LOCKFILE
+        else
+            color_msg red FAILED && return 1
+        fi
+    fi
+}
+
+stop() {
+    echo -n "Stopping $PROG : "
+    PROC_PID=$(pgrep -P 1 -u root ^$PROG)
+    if [ -z "$PROC_PID" ]; then
+        echo -n "is not running."
+        color_msg yellow WARNING
+    else
+        kill -TERM ${PROC_PID} >/dev/null 2>&1
+        while [ "$STOPTIME" -gt 0 ]; do
+            kill -0 ${PROC_PID} >/dev/null 2>&1 || break
+            STOPTIME=$(($STOPTIME-1))
+            echo -n "." && sleep 0.001s
+        done
+        if [ "$STOPTIME" -le 0 ]; then
+            color_msg red TIMEOUT && exit 1
+        else
+            color_msg green SUCCESS
+            rm -f $PIDFILE $LOCKFILE
+        fi
+    fi
+}
+
+restart() {
+    echo -n "Restart $PROG : "
+    echo
+    echo -en "\t" && stop
+    echo -en "\t" && start
+}
+
+reload() {
+    echo -n "Reloading $PROG : "
+    PROC_PID=$(pgrep -P 1 -u root ^$PROG)
+    if [ -n "$PROC_PID" ]; then
+        $DAEMON -D -f $CONF -p $PIDFILE -sf ${PROC_PID} >/dev/null 2>&1
+        color_msg green SUCCESS
+    else
+        echo -n "is not running."
+        color_msg yellow WARNING
+    fi
+}
+
+force-reload(){
+    echo -n "Force-reloading $PROG : "
+    PROC_PID=$(pgrep -P 1 -u root ^$PROG)
+    if [ -n "$PROC_PID" ]; then
+        $DAEMON -D -f $CONF -p $PIDFILE -st ${PROC_PID} >/dev/null 2>&1
+        color_msg green SUCCESS
+    else
+        echo -n "is not running."
+        color_msg yellow WARNING
+    fi
+}
+
+status() {
+    PROC_PID=$(pgrep -P 1 -u root ^$PROG)
+    if [ -z "$PROC_PID" ];then
+        echo "$PROG is stopped"
+        exit 3
+    else
+        echo "$PROG (pid $PROC_PID) is running..."
+        exit 0
+    fi
+}
+
+case "$1" in
+    configtest)
+        configtest
+        ;;
+    start)
+        configtest
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart|try-restart)
+        configtest
+        restart
+        ;;
+    reload)
+        configtest
+        reload
+        ;;
+    force-reload)
+        configtest
+        force-reload
+        ;;
+    status)
+        status
+        ;;
+    *)
+        echo $"Usage: $0 {configtest|start|stop|restart|reload|force-reload|status}"
+        exit 1
+        ;;
+esac
+

@@ -1,0 +1,123 @@
+ServerRoot "/usr/local/services/httpd"
+
+# Mutex default:logs
+
+Listen 80  http
+
+# Dynamic Shared Object (DSO) Support
+#LoadModule ratelimit_module modules/mod_ratelimit.so
+LoadModule proxy_module modules/mod_proxy.so
+LoadModule proxy_connect_module modules/mod_proxy_connect.so
+#LoadModule proxy_ftp_module modules/mod_proxy_ftp.so
+LoadModule proxy_http_module modules/mod_proxy_http.so
+LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so
+#LoadModule proxy_scgi_module modules/mod_proxy_scgi.so
+#LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
+#LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
+#LoadModule proxy_express_module modules/mod_proxy_express.so
+#LoadModule lbmethod_byrequests_module modules/mod_lbmethod_byrequests.so
+#LoadModule lbmethod_bytraffic_module modules/mod_lbmethod_bytraffic.so
+#LoadModule lbmethod_bybusyness_module modules/mod_lbmethod_bybusyness.so
+#LoadModule lbmethod_heartbeat_module modules/mod_lbmethod_heartbeat.so
+LoadModule mpm_event_module modules/mod_mpm_event.so
+#LoadModule dav_module modules/mod_dav.so
+#LoadModule dav_fs_module modules/mod_dav_fs.so
+#LoadModule dav_lock_module modules/mod_dav_lock.so
+#LoadModule dav_svn_module     modules/mod_dav_svn.so
+#LoadModule authz_svn_module   modules/mod_authz_svn.so
+
+User www
+Group www
+
+# 'Main' server configuration
+
+ServerAdmin adam.li@ismole.com
+
+ServerName <%= @ipaddress %>:80
+
+<Directory />
+    AllowOverride none
+    Require all denied
+</Directory>
+
+DocumentRoot "/www/wwwroot"
+<Directory "/www/wwwroot">
+    Options FollowSymLinks
+    AllowOverride None
+    Require all granted
+</Directory>
+
+DirectoryIndex index.php index.html
+
+<Files ".ht*">
+    Require all denied
+</Files>
+
+ErrorLog "/var/log/httpd/error.log"
+LogLevel warn
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+#CustomLog "/var/log/httpd/access.log" common
+CustomLog "logs/access_log" combined
+
+# Alias /webpath /full/filesystem/path
+#ScriptAlias /cgi-bin/ "/usr/local/services/httpd/cgi-bin/"
+
+<Directory "/usr/local/services/httpd/cgi-bin">
+    AllowOverride None
+    Options None
+    Require all denied
+</Directory>
+
+<IfModule mime_module>
+    TypesConfig conf/mime.types
+    AddType application/x-compress .Z
+    AddType application/x-gzip .gz .tgz
+    AddType text/html .php
+    AddHandler php5-script .php
+</IfModule>
+
+MIMEMagicFile conf/magic
+
+MaxRanges default
+
+EnableMMAP off
+EnableSendfile on
+
+# Supplemental configuration
+# Server-pool management (MPM specific)
+Include conf/extra/httpd-mpm.conf
+
+# Fancy directory listings
+Include conf/extra/httpd-autoindex.conf
+
+# Real-time info on requests and configuration
+#Include conf/extra/httpd-info.conf
+
+# Virtual hosts
+#Include conf/extra/httpd-vhosts.conf
+
+# Distributed authoring and versioning (WebDAV)
+#Include conf/extra/httpd-dav.conf
+
+# Various default settings
+Include conf/extra/httpd-default.conf
+
+# Configure mod_proxy_html to understand HTML4/XHTML1
+<IfModule proxy_html_module>
+Include conf/extra/proxy-html.conf
+</IfModule>
+
+# Secure (SSL/TLS) connections
+Include conf/extra/httpd-ssl.conf
+#
+# Note: The following must must be present to support
+#       starting without SSL on platforms with no /dev/random equivalent
+#       but a statically compiled-in mod_ssl.
+#
+<IfModule ssl_module>
+SSLRandomSeed startup builtin
+SSLRandomSeed connect builtin
+</IfModule>
+
+TraceEnable Off

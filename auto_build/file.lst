@@ -1,0 +1,53 @@
+#!/bin/bash
+## Base devel library
+ZLIB_SRC='zlib-1.2.7.tar.bz2|2ab442d169156f34c379c968f3f482dd'
+OPENSSL_SRC='openssl-1.0.1c.tar.gz|ae412727c8c15b67880aef7bd2999b2e'
+CARES_SRC='c-ares-1.9.1.tar.gz|389db4917a3b58c4ce4ebfe961fd84c4'
+CURL_SRC='curl-7.28.1.tar.bz2|26eb081c999b0e203770869427e9a93d'
+LIBXML2_SRC='libxml2-2.8.0.tar.gz|c62106f02ee00b6437f0fb9d370c1093'
+LIBXSLT_SRC='libxslt-1.1.26.tar.gz|e61d0364a30146aaa3001296f853b2b9'
+PCRE_SRC='pcre-8.31.tar.bz2|1c9a276af932b5599157f96e945391f0'
+LIBEVENT_SRC='libevent-2.0.21-stable.tar.gz|b2405cc9ebf264aa47ff615d9de527a2'
+FREETYPE_SRC='freetype-2.4.10.tar.bz2|13286702e9390a91661f980608adaff1'
+LIBPNG_SRC='libpng-1.5.12.tar.bz2|d87f9c34ccab8242c00e41925839f6c9'
+LIBJPEG_SRC='jpegsrc.v8d.tar.gz|52654eb3b2e60c35731ea8fc87f1bd29'
+GD2_SRC='gd-2.0.35.tar.bz2|6c6c3dbb7bf079e0bb5fbbfd3bb8a71c'
+## high availability for lvs/haproxy/nginx and so on
+KEEPALIVED_SRC='keepalived-1.2.7.tar.gz|8551a34ee048895dbe5350a031ff29c1'
+## 4-layer and 7-layer reverse proxy
+HAPROXY_SRC='haproxy-1.4.22.tar.gz|a0b007c76f6a78524f3b3dd5e704979c'
+## web server or 7-layer reverse proxy
+NGINX_SRC='nginx-1.2.5.tar.gz|4f5a55187a3d45fa37d99d07ddd90800'
+NGX_HEADER_SRC='headers-more-nginx-module-0.19.tar.gz|69e74107a5d969bb5de48190993193ad'
+## apache
+HTTPD_SRC='httpd-2.4.3.tar.bz2|87aaf7bc7e8715f0455997bb8c6791aa'
+HTTPD_DEPS_SRC='httpd-2.4.3-deps.tar.bz2|0ac7afab1dab1f1caa9a1bfc5cc258da'
+## lighttpd
+LIGHTTPD_SRC='lighttpd-1.4.32.tar.bz2|8e2d4ae8e918d4de1aeb9842584d170b'
+## nosql
+LIBMEMCACHED_SRC='libmemcached-1.0.14.tar.gz|3b074b9e23e07fe8fbb85ba5f952f62c'
+MEMCACHED_SRC='memcached-1.4.15.tar.gz|36ea966f5a29655be1746bf4949f7f69'
+TC_SRC='tokyocabinet-1.4.48.tar.gz|fd03df6965f8f56dd5b8518ca43b4f5e'
+TT_SRC='tokyotyrant-1.1.41.tar.gz|a47e58897bd1cbbac173d5a66cc32ae3'
+REDIS_SRC='redis-2.6.7.tar.gz|9c3db210faff9fea3c17f2b71c2760f4'
+MOXI_SRC='moxi-server_x86_64_1.8.1.rpm|ead8d4ab89413578748165b349a0e19e'
+## mysql
+MYSQL_SRC='mysql-5.5.28.tar.gz|da8ddb3d00e6e159153d2444360f52a8'
+XTRABACKUP_SRC='percona-xtrabackup-2.0.4.tar.gz|a47da34326c07966d67f2def837f679a'
+##php and pecl
+PHP_SRC='php-5.4.9.tar.bz2|076a9f84d861d3f664a2878d5773ba78'
+PECL_APC_SRC='APC-3.1.13.tgz|c9e47002e3a67ebde3a6f81437c7b6e0'
+PECL_MEMCACHE_SRC='memcache-3.0.7.tgz|5cc9f2ef11f5c931794ece1a148416df'
+PECL_REDIS_SRC='phpredis.tar.bz2|4d9fb140de34e7a39c0c278b5d721a60'
+PECL_COUCHBASE_SRC='php-ext-couchbase-1.0.5-centos62-x86_64.tar.gz|6d48e0891637e9199dad13c5e64d22cb'
+PECL_MEMCACHED_SRC='memcached-2.1.0.tgz|daf070aad13bebffdff50acf6e93043c'
+PECL_XCACHE_SRC='xcache-3.0.0.tar.bz2|63be7c8b14ffc01babe5378111f13228'
+PECL_XDEBUG_SRC='xdebug-2.2.1.tgz|5e5c467e920240c20f165687d7ac3709'
+## zabbix monitor
+ZABBIX_SRC='zabbix-2.0.4.tar.gz|1e3eca19867cadc8377895a646c78dd6'
+## cache reverse proxy
+SQUID_SRC='squid-2.7.STABLE9.tar.bz2|3c6642c85470b1079207d43bba25a819'
+VARNISH_SRC='varnish-3.0.2.tar.gz|c8eae0aabbe66b6daabdf3a1f58cd47a'
+TRAFFIC_SERVER_SRC='trafficserver-3.2.0.tar.bz2|112c15021d4742f172885b4920992db6'
+#pure-ftpd
+PURE_FTPD_SRC='pure-ftpd-1.0.36.tar.bz2|7899c75c1fed7dbad0352eb31080e066'
