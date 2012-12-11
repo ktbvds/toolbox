@@ -12,6 +12,6 @@
     noolddir
     sharedscripts
     postrotate
-    /bin/kill -USR1 $(cat /var/run/php-fpm.pid)
+        [ -f '/var/run/php-fpm.pid' ] && kill -USR1 $(cat /var/run/php-fpm.pid)
     endscript
 }
